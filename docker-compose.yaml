@@ -1,0 +1,48 @@
+version: '2'
+
+networks:
+  kafka-apps:
+    driver: bridge
+
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    networks:
+      - kafka-apps
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+    networks:
+      - kafka-apps
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+  application-creation-service-kafka:
+    build: application-creation-service-kafka/.
+    ports:
+     - '8093:8093'
+    networks:
+      - kafka-apps
+  application-processing-service-kafka:
+    build: application-processing-service-kafka/.
+    ports:
+     - '8094:8094'
+    networks:
+      - kafka-apps
+  loan-creation-service-kafka:
+    build: loan-creation-service-kafka/.
+    ports:
+     - '8095:8095'
+    networks:
+      - kafka-apps
+  money-issuing-service-kafka:
+    build: money-issuing-service-kafka/.
+    ports:
+     - '8096:8096'
+    networks:
+      - kafka-apps
